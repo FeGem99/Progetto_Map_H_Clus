@@ -1,7 +1,8 @@
 
 
 public class Data {
-	
+	private Example data[]; //rappresenta il dataset
+	private int numberOfExamples; //numero di esempi nel dataset
 	
 	
 	Data(){
@@ -47,7 +48,40 @@ public class Data {
 		
 		
 	}
+
+	public int getNumberOfExample(){
+		return numberOfExamples;
+	}
 	
+	public Example getExample(int exampleIndex){
+		if(exampleIndex>=0 && exampleIndex<numberOfExamples){
+			return data[exampleIndex];
+		} else {
+			throw new IndexOutOfBoundsException("indice non valido");
+		}
+		}
+		
+		public double [][] distance() {
+			double [][] distanceMatrix = new double[numberOfExamples][numberOfExamples];
+			for (int i = 0; i < numberOfExamples; i++) {
+				for (int j = i + 1; j < numberOfExamples; j++) {
+					distanceMatrix[i][j] = data[i].distance(data[j]);
+					
+				}
+			}
+			return distanceMatrix;
+		}
+		
+		@Override
+		public String toString() {
+			StringBuilder sb = new StringBuilder();
+	
+			for (int i = 0; i < numberOfExamples; i++) {
+				sb.append(i).append(":").append(data[i].toString()).append("\n");
+			}
+	
+			return sb.toString();
+		}
 	
 
 	public static void main(String args[]){

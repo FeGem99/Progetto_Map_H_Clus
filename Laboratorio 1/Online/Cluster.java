@@ -34,7 +34,7 @@ class Cluster {
 			return copyC;
 	}
 	
-	// crea un nuovo cluster che è la fusione dei due cluster pre-esistenti
+	
 	Cluster mergeCluster (Cluster c)
 	{
 		Cluster newC=new Cluster();

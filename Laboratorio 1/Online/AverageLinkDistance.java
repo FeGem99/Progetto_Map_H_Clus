@@ -10,7 +10,7 @@ public double distance(Cluster c1, Cluster c2, Data d) {
         Example e1 = d.getExample(c1.getElement(i));
 
         for(int j=0; j<c2.getSize(); j++){
-            Example e2 = d.getExample(c2.getElement(j))
+            Example e2 = d.getExample(c2.getElement(j));
             totalDistance += e1.distance(e2);
             numDistance++;
         }

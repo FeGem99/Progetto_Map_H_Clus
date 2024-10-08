@@ -1,5 +1,5 @@
 public class Dendrogram {
-    private ClusterSet tree[]; //modella il dendrogramma
+    public ClusterSet tree[]; //modella il dendrogramma
 
 public Dendrogram (int depth) {
         tree =new ClusterSet[depth];
@@ -20,7 +20,21 @@ ClusterSet getClusterSet(int level){
     }
   
 }
-    
 
+public String toString() {
+    String v=
+    "";
+    for (int i=0;i<tree.length;i++)
+    v+=("level"+i+":\n"+tree[i]+"\n");
+    return v;
+    }
+    String toString(Data data) {
+    String v=
+    "";
+    for (int i=0;i<tree.length;i++)
+    v+=("level"+i+":\n"+tree[i].toString(data)+"\n");
+    return v;
+    }
+    
 
 }

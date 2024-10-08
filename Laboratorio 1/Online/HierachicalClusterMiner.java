@@ -21,6 +21,9 @@ class HierachicalClusterMiner {
 		return dendrogram.toString(data);
 	}
 	
+	void mine(Data data, ClusterDistance distance){
+		
+	}
 
 	
 }

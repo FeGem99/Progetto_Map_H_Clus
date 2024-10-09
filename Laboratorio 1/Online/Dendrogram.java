@@ -21,6 +21,10 @@ ClusterSet getClusterSet(int level){
   
 }
 
+public int getDepth() {
+    return tree.length;
+}
+
 public String toString() {
     String v=
     "";

@@ -1,4 +1,7 @@
-
+package distance;
+import data.Data;
+import data.Example;
+import clustering.Cluster;
 
 public class AverageLinkDistance implements ClusterDistance{
 @Override

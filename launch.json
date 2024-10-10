@@ -1,0 +1,13 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+      {
+        "type": "java",
+        "request": "launch",
+        "name": "Debug (Launch)",
+        "mainClass": "NomeDellaTuaClassePrincipale",
+        "console": "integratedTerminal"
+      }
+    ]
+  }
+  

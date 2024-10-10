@@ -5,6 +5,7 @@ import distance.AverageLinkDistance;
 import distance.ClusterDistance;
 import distance.SingleLinkDistance;
 
+import java.util.Scanner;
 public class MainTest {
 
 	/**
@@ -16,7 +17,18 @@ public class MainTest {
 		
 		Data data =new Data();
 		System.out.println(data);
-		int k=5;
+		int k;
+		try (Scanner scanner = new Scanner(System.in)){
+			System.out.println("inserisci la profondità del Dendrogramma: ");
+			k = scanner.nextInt();
+			if(k<2){
+				throw new InvalidDepthException("selezionare un numero maggiore di 2");
+			}
+		
+		}
+		
+		
+		
 		HierachicalClusterMiner clustering=new HierachicalClusterMiner(k);
 		
 		System.out.println("Single link distance");

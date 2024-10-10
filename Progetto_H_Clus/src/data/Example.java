@@ -1,3 +1,6 @@
+package data;
+
+
 public class Example {
    
     private Double [] example; //attributo della classe Example

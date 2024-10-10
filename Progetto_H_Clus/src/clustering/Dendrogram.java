@@ -1,3 +1,7 @@
+package clustering;
+
+import data.Data;
+
 public class Dendrogram {
     public ClusterSet tree[]; //modella il dendrogramma
 

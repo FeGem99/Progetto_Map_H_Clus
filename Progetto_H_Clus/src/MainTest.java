@@ -1,3 +1,9 @@
+import clustering.HierachicalClusterMiner;
+import clustering.InvalidDepthException;
+import data.Data;
+import distance.AverageLinkDistance;
+import distance.ClusterDistance;
+import distance.SingleLinkDistance;
 
 public class MainTest {
 

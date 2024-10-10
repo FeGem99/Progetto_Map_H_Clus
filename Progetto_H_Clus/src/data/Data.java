@@ -1,11 +1,11 @@
-
+package data;
 
 public class Data {
 	private Example data[]; //rappresenta il dataset
 	private int numberOfExamples; //numero di esempi nel dataset
 	
 	
-	Data(){
+	public Data(){
 			
 		
 		//data

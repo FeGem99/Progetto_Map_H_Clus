@@ -18,6 +18,7 @@ public class MainTest {
 		System.out.println(data);
 		int depth;
         do {
+			try{
 			System.out.print("Inserisci la profondità del dendrogramma (deve essere >= 1): ");
             depth = scanner.nextInt();
             if (depth < 1) {
@@ -25,7 +26,18 @@ public class MainTest {
             } else if (depth>data.getNumberOfExample()) {
 				throw new InvalidDepthException("profondità del dendrogramma è superiore al numero di esempi memorizzati nel dataset, riprova");
 			}
-        } while (depth < 1);
+         // Se non ci sono eccezioni, esci dal ciclo
+		 break;
+
+		} catch (InvalidDepthException e) {
+			// Stampa il messaggio di errore e riprova
+			System.out.println("Errore: " + e.getMessage());
+		} catch (Exception e) {
+			// Gestione di eventuali errori di input non validi
+			System.out.println("Errore di input: inserire un numero valido.");
+			scanner.next(); // Pulisce il buffer dello scanner per evitare loop infiniti
+		}
+	} while (true);
 
 		HierachicalClusterMiner clustering = new HierachicalClusterMiner(depth);
 		// Creazione dell'oggetto ClusterDistance in base alla scelta dell'utente

@@ -24,7 +24,24 @@ public class MainTest {
 			if(k<2){
 				throw new InvalidDepthException("selezionare un numero maggiore di 2");
 			}
-		
+		// Aggiungiamo il menu per selezionare il tipo di misura di distanza
+		System.out.println("Seleziona il tipo di misura di distanza:");
+		System.out.println("1. Single Link Distance");
+		System.out.println("2. Average Link Distance");
+		int scelta = scanner.nextInt();
+
+		// Creazione dell'oggetto ClusterDistance in base alla scelta dell'utente
+		ClusterDistance distance;
+		if (scelta == 1) {
+			distance = new SingleLinkDistance();
+			System.out.println("Hai selezionato: Single Link Distance");
+		} else if (scelta == 2) {
+			distance = new AverageLinkDistance();
+			System.out.println("Hai selezionato: Average Link Distance");
+		} else {
+			System.out.println("Scelta non valida. Verrà utilizzata di default la Single Link Distance.");
+			distance = new SingleLinkDistance();
+		}
 		}
 		
 		

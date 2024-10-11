@@ -25,6 +25,9 @@ public class Cluster {
 	}
 	
 	public int getElement(int i) {
+		if (i>=clusteredData.length || i<0){
+			throw new IndexOutOfBoundsException("indice" + i + " è fuori dai limit");
+		}
 		return clusteredData[i];
 	}
 	

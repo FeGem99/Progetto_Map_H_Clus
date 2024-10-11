@@ -38,21 +38,29 @@ public class MainTest {
 			scanner.next(); // Pulisce il buffer dello scanner per evitare loop infiniti
 		}
 	} while (true);
-
+	
 		HierachicalClusterMiner clustering = new HierachicalClusterMiner(depth);
 		// Creazione dell'oggetto ClusterDistance in base alla scelta dell'utente
 		ClusterDistance distance = null;
        // Scelta del tipo di distanza tra cluster
-	   do {
+	   
+		do {
+			try{
 		   System.out.println("Scegli il tipo di distanza tra cluster:");
 		   System.out.println("1. Single link distance");
 		   System.out.println("2. Average link distance");
-		   int scelta = scanner.nextInt();
+		   String input = scanner.next(); // Legge l'input come stringa
+		   int scelta = Integer.parseInt(input); // Prova a convertire l'input in un numero
+		   
 		   switch (scelta) {
 			   case 1 -> distance = new SingleLinkDistance();
 			   case 2 -> distance = new AverageLinkDistance();
 			   default -> System.out.println("Scelta non valida. Riprova.");
 		   }
+		}
+		catch (NumberFormatException e){
+			System.out.println("Errore: inserire un numero valido (1 o 2)");
+		}
 	   } while (distance == null);
 	
 		
@@ -73,7 +81,7 @@ public class MainTest {
 		clustering.mine(data,distance);
 		System.out.println(clustering);
 		System.out.println(clustering.toString(data));
-		
+		scanner.close();
 	}
 
 }

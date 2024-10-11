@@ -4,7 +4,6 @@ import data.Data;
 import distance.AverageLinkDistance;
 import distance.ClusterDistance;
 import distance.SingleLinkDistance;
-
 import java.util.Scanner;
 public class MainTest {
 
@@ -13,43 +12,37 @@ public class MainTest {
 	 * @throws InvalidDepthException 
 	 */
 	public static void main(String[] args) throws InvalidDepthException {
-		
+		Scanner scanner = new Scanner(System.in);
 		
 		Data data =new Data();
 		System.out.println(data);
-		int k;
-		try (Scanner scanner = new Scanner(System.in)){
-			System.out.println("inserisci la profondità del Dendrogramma: ");
-			k = scanner.nextInt();
-			if(k<2){
-				throw new InvalidDepthException("selezionare un numero maggiore di 2");
+		int depth;
+        do {
+			System.out.print("Inserisci la profondità del dendrogramma (deve essere >= 1): ");
+            depth = scanner.nextInt();
+            if (depth < 1) {
+                throw new InvalidDepthException("Profondità non valida, selezionare numero >=1, riprova");
+            } else if (depth>data.getNumberOfExample()) {
+				throw new InvalidDepthException("profondità del dendrogramma è superiore al numero di esempi memorizzati nel dataset, riprova");
 			}
-		// Aggiungiamo il menu per selezionare il tipo di misura di distanza
-		System.out.println("Seleziona il tipo di misura di distanza:");
-		System.out.println("1. Single Link Distance");
-		System.out.println("2. Average Link Distance");
-		int scelta = scanner.nextInt();
+        } while (depth < 1);
 
+		HierachicalClusterMiner clustering = new HierachicalClusterMiner(depth);
 		// Creazione dell'oggetto ClusterDistance in base alla scelta dell'utente
-		ClusterDistance distance;
-		if (scelta == 1) {
-			distance = new SingleLinkDistance();
-			System.out.println("Hai selezionato: Single Link Distance");
-		} else if (scelta == 2) {
-			distance = new AverageLinkDistance();
-			System.out.println("Hai selezionato: Average Link Distance");
-		} else {
-			System.out.println("Scelta non valida. Verrà utilizzata di default la Single Link Distance.");
-			distance = new SingleLinkDistance();
-		}
-		}
-		
-		
-		
-		HierachicalClusterMiner clustering=new HierachicalClusterMiner(k);
-		
-		System.out.println("Single link distance");
-		ClusterDistance distance=new SingleLinkDistance();
+		ClusterDistance distance = null;
+       // Scelta del tipo di distanza tra cluster
+	   do {
+		   System.out.println("Scegli il tipo di distanza tra cluster:");
+		   System.out.println("1. Single link distance");
+		   System.out.println("2. Average link distance");
+		   int scelta = scanner.nextInt();
+		   switch (scelta) {
+			   case 1 -> distance = new SingleLinkDistance();
+			   case 2 -> distance = new AverageLinkDistance();
+			   default -> System.out.println("Scelta non valida. Riprova.");
+		   }
+	   } while (distance == null);
+	
 		
 		double [][] distancematrix=data.distance();
 		System.out.println("Distance matrix:\n");

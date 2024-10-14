@@ -1,11 +1,20 @@
 package clustering;
+//da sistemare
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.io.Serializable;
 
 import data.Data;
 import distance.ClusterDistance;
 
-public class HierachicalClusterMiner {
+public class HierachicalClusterMiner implements Serializable {
 	
-	private Dendrogram dendrogram;
+	private static final long serialVersionUID = 1L;
+    private Dendrogram dendrogram;
 
 	
 	
@@ -47,5 +56,20 @@ public class HierachicalClusterMiner {
             dendrogram.setClusterSet(newLevel, level);
         }
     }
+
+    //metodo per salvare un'istanza serializzata su file
+    public void salva(String fileName) throws FileNotFoundException, IOException {
+        try (ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream(fileName))) {
+            out.writeObject(this);
+        }
+    }
+
+    //metodo per caricare un'istanzia serializzata
+    public static HierachicalClusterMiner loadHierachicalClusterMiner (String fileName)
+        throws FileNotFoundException, IOException, ClassNotFoundException {
+            try (ObjectInputStream in = new ObjectInputStream(new FileInputStream(fileName))) {
+                return (HierachicalClusterMiner) in.readObject(); 
+            }
+        }
 }
 

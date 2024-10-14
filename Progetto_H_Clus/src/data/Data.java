@@ -1,61 +1,59 @@
 package data;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 
 public class Data {
-	private Example data[]; //rappresenta il dataset
+	private List<Example> data= new ArrayList<>(); //rappresenta il dataset
 	private int numberOfExamples; //numero di esempi nel dataset
 	
 	
 	public Data(){
-			
-		
-		//data
-		
-		data = new Example [5];
-		Example e=new Example(3);
-		e.set(0, 1.0);
-		e.set(1, 2.0);
-		e.set(2, 0.0);
-		data[0]=e;
-		
-		e=new Example(3);
-		e.set(0, 0.0);
-		e.set(1, 1.0);
-		e.set(2, -1.0);
-		data[1]=e;
-		
-		e=new Example(3);
-		e.set(0, 1.0);
-		e.set(1, 3.0);
-		e.set(2, 5.0);
-		data[2]=e;
-		
-		
-		e=new Example(3);
-		e.set(0, 1.0);
-		e.set(1, 3.0);
-		e.set(2, 4.0);
-		data[3]=e;
-		
-		e=new Example(3);
-		e.set(0, 2.0);
-		e.set(1, 2.0);
-		e.set(2, 0.0);
-		data[4]=e;
-						
-		// numberOfExamples		
-		 numberOfExamples=5;		 
-		 
-		
-		
+			inizializeData();
 	}
+		//inizializza il dataset predefinito
+		private void inizializeData(){
+		
+		Example e=new Example();
+		e.add(1.0);
+		e.add(2.0);
+		e.add(0.0);
+		data.add(e);
+		
+		e=new Example();
+		e.add(0.0);
+		e.add(1.0);
+		e.add(-1.0);
+		data.add(e);
+		
+		e=new Example();
+		e.add(1.0);
+		e.add(3.0);
+		e.add(5.0);
+		data.add(e);
+		
+		
+		e=new Example();
+		e.add(1.0);
+		e.add(3.0);
+		e.add(4.0);
+		data.add(e);
+		
+		e=new Example();
+		e.add(2.0);
+		e.add(2.0);
+		e.add(0.0);
+		data.add(e);
+		}
+		
 
 	public int getNumberOfExample(){
-		return numberOfExamples;
+		return data.size();
 	}
 	
 	public Example getExample(int exampleIndex){
-		if(exampleIndex>=0 && exampleIndex<numberOfExamples){
-			return data[exampleIndex];
+		if(exampleIndex>=0 && exampleIndex<data.size()){
+			return data.get(exampleIndex);
 		} else {
 			throw new IndexOutOfBoundsException("indice non valido");
 		}
@@ -65,7 +63,9 @@ public class Data {
 			double [][] distanceMatrix = new double[numberOfExamples][numberOfExamples];
 			for (int i = 0; i < numberOfExamples; i++) {
 				for (int j = i + 1; j < numberOfExamples; j++) {
-					distanceMatrix[i][j] = data[i].distance(data[j]);
+					double dist = getExample(i).distance(getExample(j));
+					distanceMatrix[i][j] = dist; 
+					distanceMatrix[j][i] = dist;
 					
 				}
 			}
@@ -75,11 +75,12 @@ public class Data {
 		@Override
 		public String toString() {
 			StringBuilder sb = new StringBuilder();
-	
-			for (int i = 0; i < numberOfExamples; i++) {
-				sb.append(i).append(":").append(data[i].toString()).append("\n");
+			Iterator<Example> iter = data.iterator();
+			int index = 0;
+			while (iter.hasNext()) {
+				sb.append("Example ").append(index).append(": ").append(iter.next().toString()).append("\n");
+				index++;
 			}
-	
 			return sb.toString();
 		}
 	
@@ -87,6 +88,7 @@ public class Data {
 	public static void main(String args[]){
 		Data trainingSet=new Data();
 		System.out.println(trainingSet);
+		
 		double [][] distancematrix=trainingSet.distance();
 		System.out.println("Distance matrix:\n");
 		for(int i=0;i<distancematrix.length;i++) {
@@ -94,10 +96,6 @@ public class Data {
 				System.out.print(distancematrix[i][j]+"\t");
 			System.out.println("");
 		}
-		
-		
-	
 	
 	}
-
 }

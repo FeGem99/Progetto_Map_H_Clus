@@ -1,53 +1,43 @@
 package data;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
 
-
-public class Example {
-   
-    private Double [] example; //attributo della classe Example
-    // Costruttore di example di lunghezza lenght
-    public Example (int length){
-        example = new Double[length];
+public class Example implements Iterable<Double>{
+    private List<Double> example;
+    Example ()
+    {
+    example=new LinkedList<>();
     }
-
-    public void set(int index, Double v){
-        if (index>=0 && index< example.length){
-            example[index]= v;
-        }
-        else {
-            throw new IndexOutOfBoundsException("indice non valido");
-        }
+    public Iterator<Double> iterator() {
+    return example.iterator();
     }
-
-    public Double get(int index){
-        if (index>=0 && index<example.length){
-            return example[index];
-        }
-        else {
-            throw new IndexOutOfBoundsException("indice non valido");
-        }
-
+    void add(Double v) {
+    example.add(v);
+    }
+    Double get(int index) {
+    return example.get(index);
     }
 
     public double distance (Example newE){
         Double sum=0.0; 
-        if (this.example.length == newE.example.length){
-            for(int i=0;i<this.example.length; i++){
-                Double diff= this.example[i]-newE.example[i];
+        Iterator<Double> thisIter = this.iterator();
+        Iterator<Double> newIter = newE.iterator();
+        
+   while (thisIter.hasNext() && newIter.hasNext()){
+                Double diff= thisIter.next()-newIter.next();
                 sum += diff * diff;
             }
-            return sum; 
-        } else {
-            throw new IllegalArgumentException("i vettori devono avere la stessa lunghezza");
-        }
+            return sum;
     }
 
    @Override
 	public String toString() {
 	    StringBuilder sb = new StringBuilder();
 	    sb.append("[");
-	    for (int i = 0; i < example.length; i++) {
-	        sb.append(example[i]);
-	        if (i < example.length - 1) {
+	    for (int i = 0; i < example.size(); i++) {
+	        sb.append(example.get(i));
+	        if (i < example.size() - 1) {
 	            sb.append(", ");
 	        }
 	    }

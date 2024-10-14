@@ -1,75 +1,68 @@
 package clustering;
 import data.Data;
+import java.util.Iterator;
+import java.util.Set;
+import java.util.TreeSet;
 
-public class Cluster {	
 
-	private Integer clusteredData[]=new Integer[0];
+
+public class Cluster implements Iterable<Integer>, Cloneable{
+	//attributo
+	private Set<Integer> clusteredData=new TreeSet<>();
 	
-	
+        @Override
+	public Iterator<Integer> iterator(){
+		return clusteredData.iterator();
+	}
 		
-		//add the index of a sample to the cluster
+	//add the index of a sample to the cluster
 	void addData(int id){
-		// controllo duplicati
-		for(int i=0; i<clusteredData.length;i++)
-			if(id==clusteredData[i])
-				return;
-		Integer clusteredDataTemp[]=new Integer[clusteredData.length+1];
-		System.arraycopy(clusteredData, 0, clusteredDataTemp, 0, clusteredData.length);
-		clusteredData=clusteredDataTemp;
-		clusteredData[clusteredData.length-1]=id;			
+		clusteredData.add(id);		
 	}
 		
 	
 	public int getSize() {
-		return clusteredData.length;
+		return clusteredData.size();
 	}
 	
-	public int getElement(int i) {
-		if (i>=clusteredData.length || i<0){
-			throw new IndexOutOfBoundsException("indice" + i + " è fuori dai limit");
-		}
-		return clusteredData[i];
-	}
+
 	
-	// crea una copia del cluster corrente
-	Cluster createACopy() {
-			Cluster copyC=new Cluster();
-			for (int i=0;i<getSize();i++)
-				copyC.addData(clusteredData[i]);
-			return copyC;
+	public Object clone() {
+		Cluster copyC = new Cluster();
+		copyC.clusteredData.addAll(this.clusteredData);
+		return copyC;
 	}
-	
+
 	
 	Cluster mergeCluster (Cluster c)
 	{
 		Cluster newC=new Cluster();
-		for (int i=0;i<getSize();i++)
-			newC.addData(clusteredData[i]);
-		for (int i=0;i<c.getSize();i++)
-			newC.addData(c.clusteredData[i]);
+			newC.clusteredData.addAll(this.clusteredData);
+			newC.clusteredData.addAll(c.clusteredData);
 		return newC;
 		
 	}
 	
 	
 	public String toString() {		
-		String str="";
-		for (int i=0;i<clusteredData.length-1;i++)
-			str+=clusteredData[i]+",";
-		str+=clusteredData[clusteredData.length-1];
-		return str;	
+		StringBuilder sb = new StringBuilder();
+        Iterator<Integer> iterator = clusteredData.iterator();
+        while (iterator.hasNext()) {
+            sb.append(iterator.next());
+            if (iterator.hasNext()) {
+                sb.append(",");
+            }
+        }
+        return sb.toString();
 	}
 	
 	String toString(Data data){
-		String str="";
-		
-		for(int i=0;i<clusteredData.length;i++)
-			str+="<"+data.getExample(clusteredData[i])+">";				
-		
-		return str;
+		StringBuilder sb = new StringBuilder();
+        Iterator<Integer> iterator = clusteredData.iterator();
+        while (iterator.hasNext()) {
+            sb.append("<").append(data.getExample(iterator.next())).append(">");
+        }
+        return sb.toString();
+	}
 		
 	}
-	
-
-
-}

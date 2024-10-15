@@ -4,10 +4,10 @@ import data.Data;
 import distance.AverageLinkDistance;
 import distance.ClusterDistance;
 import distance.SingleLinkDistance;
-
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Scanner;
+
 
 public class MainTest {
 
@@ -41,7 +41,7 @@ public class MainTest {
                     }
                 } else if (scelta.equals("2")) {
                     // Creazione di un nuovo oggetto
-                    Data data = new Data();
+                    Data data = new Data("NomeDellaTabella");
                     System.out.println(data);
                     int depth;
 

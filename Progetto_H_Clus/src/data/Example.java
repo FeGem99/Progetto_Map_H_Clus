@@ -4,15 +4,15 @@ import java.util.LinkedList;
 import java.util.List;
 
 public class Example implements Iterable<Double>{
-    private List<Double> example;
-    Example ()
+    public List<Double> example;
+    public Example ()
     {
     example=new LinkedList<>();
     }
     public Iterator<Double> iterator() {
     return example.iterator();
     }
-    void add(Double v) {
+    public void add(Double v) {
     example.add(v);
     }
     Double get(int index) {

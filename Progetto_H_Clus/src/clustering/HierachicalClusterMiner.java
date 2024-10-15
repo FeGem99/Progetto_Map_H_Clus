@@ -25,6 +25,7 @@ public class HierachicalClusterMiner implements Serializable {
 	}
 	
 	
+        @Override
 	public String toString() {
 		return dendrogram.toString();
 	}

@@ -1,12 +1,13 @@
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.util.Scanner;
+
 import clustering.HierachicalClusterMiner;
 import clustering.InvalidDepthException;
 import data.Data;
 import distance.AverageLinkDistance;
 import distance.ClusterDistance;
 import distance.SingleLinkDistance;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.util.Scanner;
 
 
 public class MainTest {

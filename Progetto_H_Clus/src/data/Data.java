@@ -1,14 +1,15 @@
 package data;
-import database.DatabaseConnectionException;
-import database.DbAccess;
-import database.EmptySetException;
-import database.MissingNumberException;
-import database.TableData;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.EmptyStackException;
 import java.util.Iterator;
 import java.util.List;
+
+import database.DatabaseConnectionException;
+import database.DbAccess;
+import database.EmptySetException;
+import database.MissingNumberException;
+import database.TableData;
 
 public class Data {
 	private List<Example> data= new ArrayList<>(); //rappresenta il dataset
@@ -133,7 +134,7 @@ public class Data {
 		public static void main(String args[]) {
 			try {
 				// Modifico il nome della tabella secondo il nome del xdatabase
-				Data trainingSet = new Data("NomeDellaTabella");
+				Data trainingSet = new Data("exampleTab");
 				System.out.println(trainingSet);
 				
 				double[][] distancematrix = trainingSet.distance();

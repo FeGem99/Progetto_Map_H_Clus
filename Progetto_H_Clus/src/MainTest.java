@@ -42,7 +42,7 @@ public class MainTest {
                     }
                 } else if (scelta.equals("2")) {
                     // Creazione di un nuovo oggetto
-                    Data data = new Data("NomeDellaTabella");
+                    Data data = new Data("exampleTab");
                     System.out.println(data);
                     int depth;
 

@@ -15,6 +15,8 @@ public class MainTest {
     public static void main(String[] args) throws InvalidDepthException {
         Scanner scanner = new Scanner(System.in);
         HierachicalClusterMiner clustering = null;
+        String directoryPath = "Saved_Object";
+        FileUtils.createDirectoryIfNotExists(directoryPath);
 
         boolean sceltaValida = false;
 
@@ -28,13 +30,13 @@ public class MainTest {
 
                 if (scelta.equals("1")) {
                     // Caricamento di un oggetto serializzato
-                    System.out.print("Inserisci il percorso del file da cui caricare il HierachicalClusterMiner: ");
+                    System.out.print("Inserisci il nome del file da caricare (da Saved_Object): ");
                     String fileName = scanner.nextLine();
-
+                    String fullPath = directoryPath + "/" + fileName;  // Percorso completo
+                    
                     try {
-                        clustering = HierachicalClusterMiner.loadHierachicalClusterMiner(fileName);
-                        System.out.println("Oggetto HierachicalClusterMiner caricato correttamente!");
-                        sceltaValida = true; // Uscita dal ciclo perché l'operazione è andata a buon fine
+                        clustering = HierachicalClusterMiner.loadHierachicalClusterMiner(fullPath);
+                        System.out.println("Oggetto HierachicalClusterMiner caricato correttamente da " + fullPath);
                     } catch (FileNotFoundException e) {
                         System.out.println("Errore: il file non è stato trovato. Riprova.");
                     } catch (IOException | ClassNotFoundException e) {
@@ -75,7 +77,7 @@ public class MainTest {
                             scanner.next(); // Pulisce il buffer dello scanner per evitare loop infiniti
                         }
                     } while (true);
-
+                    scanner.nextLine();
                     clustering = new HierachicalClusterMiner(depth);
 
                     // Creazione dell'oggetto ClusterDistance in base alla scelta dell'utente
@@ -112,19 +114,21 @@ public class MainTest {
 
                     // Ciclo per il salvataggio con gestione eccezioni
                     boolean salvataggioRiuscito = false;
-                    while (!salvataggioRiuscito) {
-                        try {
-                            System.out.print("Inserisci il percorso dove salvare il nuovo HierachicalClusterMiner: ");
-                            scanner.nextLine();  // Consuma la nuova riga
-                            String fileName = scanner.nextLine();
-                            clustering.salva(fileName);
-                            System.out.println("Oggetto HierachicalClusterMiner salvato correttamente in " + fileName);
-                            salvataggioRiuscito = true; // Uscita dal ciclo perché il salvataggio è andato a buon fine
-                        } catch (IOException e) {
-                            System.out.println("Errore durante il salvataggio: " + e.getMessage());
-                            System.out.println("Riprova con un percorso valido.");
-                        }
-                    }
+            while (!salvataggioRiuscito) {
+                try {
+                    scanner.nextLine();
+                    System.out.print("Inserisci il nome del file: ");
+                    String fileName = scanner.nextLine();  // Usa scanner.nextLine() per leggere il nome del file
+                    String fullPath = "Saved_Object/" + fileName;  // Salva nella directory Saved_Object
+                    clustering.salva(fullPath);  // Salva il file nel percorso specificato
+                    System.out.println("Oggetto HierachicalClusterMiner salvato correttamente in " + fullPath);
+                    salvataggioRiuscito = true;  // Esci dal ciclo se il salvataggio ha successo
+    } catch (IOException e) {
+        System.out.println("Errore durante il salvataggio: " + e.getMessage());
+        System.out.println("Riprova con un percorso valido.");
+    }
+}
+
                     sceltaValida = true; // Uscita dal ciclo perché tutte le operazioni sono andate a buon fine
                 } else {
                     System.out.println("Scelta non valida. Riprova.");
@@ -137,4 +141,6 @@ public class MainTest {
         // Fine dell'elaborazione
         scanner.close();
     }
-}
+
+    }
+

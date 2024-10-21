@@ -1,8 +1,11 @@
 package clustering;
 
+import java.io.Serializable;
+
 import data.Data;
 
-public class Dendrogram {
+public class Dendrogram implements Serializable{
+    private static final long serialVersionUID = 1L;
     public ClusterSet tree[]; //modella il dendrogramma
 
 public Dendrogram (int depth) {

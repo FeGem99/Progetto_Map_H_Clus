@@ -40,10 +40,22 @@ public class MainTest {
                     } catch (IOException | ClassNotFoundException e) {
                         System.out.println("Errore durante il caricamento del file: " + e.getMessage());
                     }
-                } else if (scelta.equals("2")) {
-                    // Creazione di un nuovo oggetto
-                    Data data = new Data("exampleTab");
-                    System.out.println(data);
+                } else if (scelta.equals("2")) {  //metodo per usare il nuovo costruttore di Data(commento da sistemare)
+                    // Ciclo per la creazione di un oggetto Data valido
+                    Data data = null;
+                    while (data == null) {
+                        try {
+                            System.out.print("Inserisci il nome della tabella: ");
+                            String tableName = scanner.nextLine();
+                            data = new Data(tableName); // Creazione del nuovo oggetto Data
+                            System.out.println("Oggetto Data creato correttamente!");
+                            System.out.println(data);
+                        } catch (Exception e) {
+                            System.out.println("Errore durante la creazione dell'oggetto Data: " + e.getMessage());
+                            System.out.println("Riprova con un nome di tabella valido.");
+                        }
+                    }
+
                     int depth;
 
                     do {

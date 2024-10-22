@@ -38,6 +38,7 @@ public class MainTest {
                     try {
                         clustering = HierachicalClusterMiner.loadHierachicalClusterMiner(fullPath);
                         System.out.println("Oggetto HierachicalClusterMiner caricato correttamente da " + fullPath);
+                        mostraDendrogramma(clustering, "Dendrogramma caricato");  // Visualizza il dendrogramma dopo il caricamento
                     } catch (FileNotFoundException e) {
                         System.out.println("Errore: il file non è stato trovato. Riprova.");
                     } catch (IOException | ClassNotFoundException e) {

@@ -152,7 +152,7 @@ public class MainTest {
         JScrollPane scrollPane = new JScrollPane(textArea);
         frame.getContentPane().add(scrollPane);
         frame.pack();
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         frame.setVisible(true);
     }
 

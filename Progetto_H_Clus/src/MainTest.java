@@ -1,6 +1,7 @@
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Scanner;
+import javax.swing.*;
 
 import clustering.HierachicalClusterMiner;
 import clustering.InvalidDepthException;
@@ -37,6 +38,7 @@ public class MainTest {
                     try {
                         clustering = HierachicalClusterMiner.loadHierachicalClusterMiner(fullPath);
                         System.out.println("Oggetto HierachicalClusterMiner caricato correttamente da " + fullPath);
+                        mostraDendrogramma(clustering, "Dendrogramma caricato");  // Visualizza il dendrogramma dopo il caricamento
                     } catch (FileNotFoundException e) {
                         System.out.println("Errore: il file non è stato trovato. Riprova.");
                     } catch (IOException | ClassNotFoundException e) {
@@ -122,6 +124,7 @@ public class MainTest {
                     String fullPath = "Saved_Object/" + fileName;  // Salva nella directory Saved_Object
                     clustering.salva(fullPath);  // Salva il file nel percorso specificato
                     System.out.println("Oggetto HierachicalClusterMiner salvato correttamente in " + fullPath);
+                    mostraDendrogramma(clustering, "Dendrogramma creato e salvato");
                     salvataggioRiuscito = true;  // Esci dal ciclo se il salvataggio ha successo
     } catch (IOException e) {
         System.out.println("Errore durante il salvataggio: " + e.getMessage());
@@ -140,6 +143,17 @@ public class MainTest {
 
         // Fine dell'elaborazione
         scanner.close();
+    }
+    // Metodo per mostrare il dendrogramma in una finestra
+    public static void mostraDendrogramma(HierachicalClusterMiner clustering, String titolo) {
+        JFrame frame = new JFrame(titolo);
+        JTextArea textArea = new JTextArea(20, 40);
+        textArea.setText(clustering.toString());  // Mostra il dendrogramma come stringa
+        JScrollPane scrollPane = new JScrollPane(textArea);
+        frame.getContentPane().add(scrollPane);
+        frame.pack();
+        frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        frame.setVisible(true);
     }
 
     }

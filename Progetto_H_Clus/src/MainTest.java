@@ -1,115 +1,160 @@
-import java.io.*;
-import java.net.ServerSocket;
-import java.net.Socket;
-import java.sql.SQLException;
-import java.util.EmptyStackException;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.Scanner;
 import javax.swing.*;
 
 import clustering.HierachicalClusterMiner;
 import clustering.InvalidDepthException;
 import data.Data;
-import data.NoDataExeption;
-import database.DatabaseConnectionException;
-import database.EmptySetException;
-import database.MissingNumberException;
 import distance.AverageLinkDistance;
 import distance.ClusterDistance;
 import distance.SingleLinkDistance;
 
-public class MainTest {
-    private static ObjectInputStream in;
-    private static ObjectOutputStream out;
 
-    public static void main(String[] args) throws InvalidDepthException, EmptyStackException, SQLException, NoDataExeption, MissingNumberException, DatabaseConnectionException, EmptySetException {
+public class MainTest {
+
+    public static void main(String[] args) throws InvalidDepthException {
         Scanner scanner = new Scanner(System.in);
         HierachicalClusterMiner clustering = null;
         String directoryPath = "Saved_Object";
         FileUtils.createDirectoryIfNotExists(directoryPath);
 
-        try (ServerSocket serverSocket = new ServerSocket(8080)) {  // Porta su cui ascolta il server
-            System.out.println("Server in ascolto sulla porta 8080...");
+        boolean sceltaValida = false;
 
-            while (true) {
-                try (Socket clientSocket = serverSocket.accept()) {
-                    System.out.println("Connessione accettata da " + clientSocket);
+        while (!sceltaValida) {
+            try {
+                // Presenta il menu all'utente
+                System.out.println("Benvenuto! Vuoi caricare un oggetto HierachicalClusterMiner esistente o crearne uno nuovo?");
+                System.out.println("1. Carica da file");
+                System.out.println("2. Crea un nuovo HierachicalClusterMiner");
+                String scelta = scanner.nextLine();
 
-                    out = new ObjectOutputStream(clientSocket.getOutputStream());
-                    in = new ObjectInputStream(clientSocket.getInputStream());
-
-                    int scelta = (int) in.readObject();  // Legge la scelta dal client
-
-                    if (scelta == 1) {
-                        // Carica un dendrogramma dal file
-                        String fileName = (String) in.readObject();
-                        String fullPath = directoryPath + "/" + fileName;
-
-                        try {
-                            clustering = HierachicalClusterMiner.loadHierachicalClusterMiner(fullPath);
-                            out.writeObject("OK");
-                            out.writeObject(clustering.toString());  // Invia il dendrogramma caricato
-                            mostraDendrogramma(clustering, "Dendrogramma caricato");
-                        } catch (FileNotFoundException e) {
-                            out.writeObject("Errore: file non trovato");
-                        } catch (IOException | ClassNotFoundException e) {
-                            out.writeObject("Errore durante il caricamento: " + e.getMessage());
-                        }
-
-                    } else if (scelta == 2) {
-                        // Crea un nuovo dendrogramma
-                        String tableName = (String) in.readObject();
-                        Data data = new Data(tableName);
-                        int depth = (int) in.readObject();
-                        
-
-                        if (depth < 1 || depth > data.getNumberOfExample()) {
-                            out.writeObject("Profondità non valida, riprova");
-                        } else {
-                            ClusterDistance distance;
-                            int distanzaTipo = (int) in.readObject();
-
-                            distance = switch (distanzaTipo) {
-                                case 1 -> new SingleLinkDistance();
-                                case 2 -> new AverageLinkDistance();
-                                default -> null;
-                            };
-
-                            if (distance != null) {
-                                clustering = new HierachicalClusterMiner(depth);
-                                clustering.mine(data, distance);
-                                out.writeObject("OK");
-                                out.writeObject(clustering.toString());
-                                mostraDendrogramma(clustering, "Dendrogramma creato e salvato");
-
-                                String fileName = (String) in.readObject();
-                                String fullPath = directoryPath + "/" + fileName;
-                                clustering.salva(fullPath);
-                            } else {
-                                out.writeObject("Tipo di distanza non valido");
-                            }
-                        }
-                    } else {
-                        out.writeObject("Scelta non valida");
+                if (scelta.equals("1")) {
+                    // Caricamento di un oggetto serializzato
+                    System.out.print("Inserisci il nome del file da caricare (da Saved_Object): ");
+                    String fileName = scanner.nextLine();
+                    String fullPath = directoryPath + "/" + fileName;  // Percorso completo
+                    
+                    try {
+                        clustering = HierachicalClusterMiner.loadHierachicalClusterMiner(fullPath);
+                        System.out.println("Oggetto HierachicalClusterMiner caricato correttamente da " + fullPath);
+                        mostraDendrogramma(clustering, "Dendrogramma caricato");  // Visualizza il dendrogramma dopo il caricamento
+                    } catch (FileNotFoundException e) {
+                        System.out.println("Errore: il file non è stato trovato. Riprova.");
+                    } catch (IOException | ClassNotFoundException e) {
+                        System.out.println("Errore durante il caricamento del file: " + e.getMessage());
                     }
-                } catch (IOException | ClassNotFoundException e) {
-                    System.out.println("Errore durante la connessione con il client: " + e.getMessage());
-                }
-            }
-        } catch (IOException e) {
-            System.out.println("Errore di connessione del server: " + e.getMessage());
-        } finally {
-            scanner.close();
-        }
-    }
+                } else if (scelta.equals("2")) {  //metodo per usare il nuovo costruttore di Data(commento da sistemare)
+                    // Ciclo per la creazione di un oggetto Data valido
+                    Data data = null;
+                    while (data == null) {
+                        try {
+                            System.out.print("Inserisci il nome della tabella: ");
+                            String tableName = scanner.nextLine();
+                            data = new Data(tableName); // Creazione del nuovo oggetto Data
+                            System.out.println("Oggetto Data creato correttamente!");
+                            System.out.println(data);
+                        } catch (Exception e) {
+                            System.out.println("Errore durante la creazione dell'oggetto Data: " + e.getMessage());
+                            System.out.println("Riprova con un nome di tabella valido.");
+                        }
+                    }
 
+                    int depth;
+
+                    do {
+                        try {
+                            System.out.print("Inserisci la profondità del dendrogramma (deve essere >= 1): ");
+                            depth = scanner.nextInt();
+                            if (depth < 1) {
+                                throw new InvalidDepthException("Profondità non valida, selezionare numero >=1, riprova");
+                            } else if (depth > data.getNumberOfExample()) {
+                                throw new InvalidDepthException("Profondità del dendrogramma è superiore al numero di esempi memorizzati nel dataset, riprova");
+                            }
+                            break;
+                        } catch (InvalidDepthException e) {
+                            System.out.println("Errore: " + e.getMessage());
+                        } catch (Exception e) {
+                            System.out.println("Errore di input: inserire un numero valido.");
+                            scanner.next(); // Pulisce il buffer dello scanner per evitare loop infiniti
+                        }
+                    } while (true);
+                    scanner.nextLine();
+                    clustering = new HierachicalClusterMiner(depth);
+
+                    // Creazione dell'oggetto ClusterDistance in base alla scelta dell'utente
+                    ClusterDistance distance = null;
+                    do {
+                        try {
+                            System.out.println("Scegli il tipo di distanza tra cluster:");
+                            System.out.println("1. Single link distance");
+                            System.out.println("2. Average link distance");
+                            String input = scanner.next(); // Legge l'input come stringa
+                            int sceltaDist = Integer.parseInt(input); // Prova a convertire l'input in un numero
+
+                            switch (sceltaDist) {
+                                case 1 -> distance = new SingleLinkDistance();
+                                case 2 -> distance = new AverageLinkDistance();
+                                default -> System.out.println("Scelta non valida. Riprova.");
+                            }
+                        } catch (NumberFormatException e) {
+                            System.out.println("Errore: inserire un numero valido (1 o 2)");
+                        }
+                    } while (distance == null);
+
+                    double[][] distancematrix = data.distance();
+                    System.out.println("Matrice delle distanze:\n");
+                    for (int i = 0; i < distancematrix.length; i++) {
+                        for (int j = 0; j < distancematrix.length; j++) {
+                            System.out.print(distancematrix[i][j] + "\t");
+                        }
+                        System.out.println("");
+                    }
+                    clustering.mine(data, distance);
+                    System.out.println(clustering);
+                    System.out.println(clustering.toString(data));
+
+                    // Ciclo per il salvataggio con gestione eccezioni
+                    boolean salvataggioRiuscito = false;
+            while (!salvataggioRiuscito) {
+                try {
+                    scanner.nextLine();
+                    System.out.print("Inserisci il nome del file: ");
+                    String fileName = scanner.nextLine();  // Usa scanner.nextLine() per leggere il nome del file
+                    String fullPath = "Saved_Object/" + fileName;  // Salva nella directory Saved_Object
+                    clustering.salva(fullPath);  // Salva il file nel percorso specificato
+                    System.out.println("Oggetto HierachicalClusterMiner salvato correttamente in " + fullPath);
+                    mostraDendrogramma(clustering, "Dendrogramma creato e salvato");
+                    salvataggioRiuscito = true;  // Esci dal ciclo se il salvataggio ha successo
+    } catch (IOException e) {
+        System.out.println("Errore durante il salvataggio: " + e.getMessage());
+        System.out.println("Riprova con un percorso valido.");
+    }
+}
+
+                    sceltaValida = true; // Uscita dal ciclo perché tutte le operazioni sono andate a buon fine
+                } else {
+                    System.out.println("Scelta non valida. Riprova.");
+                }
+            } catch (Exception e) {
+                System.out.println("Errore imprevisto: " + e.getMessage());
+            }
+        }
+
+        // Fine dell'elaborazione
+        scanner.close();
+    }
+    // Metodo per mostrare il dendrogramma in una finestra
     public static void mostraDendrogramma(HierachicalClusterMiner clustering, String titolo) {
         JFrame frame = new JFrame(titolo);
         JTextArea textArea = new JTextArea(20, 40);
-        textArea.setText(clustering.toString());
+        textArea.setText(clustering.toString());  // Mostra il dendrogramma come stringa
         JScrollPane scrollPane = new JScrollPane(textArea);
         frame.getContentPane().add(scrollPane);
         frame.pack();
         frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         frame.setVisible(true);
     }
-}
+
+    }
+

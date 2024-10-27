@@ -46,8 +46,16 @@ public class ServerOneClient implements Runnable {
                     boolean success = loadTableFromDatabase(tableName);
                     out.writeObject(success ? "OK" : "Tabella non trovata.");
                     break;
-
-                case 1: // Carica il dendrogramma da file
+            
+                case 1: // Apprende il dendrogramma dal database
+                    int depth = (Integer) in.readObject();
+                    int distanceType = (Integer) in.readObject();
+                    String learnedDendrogram = learnDendrogramFromDatabase(depth, distanceType);
+                    out.writeObject("OK");
+                    out.writeObject(learnedDendrogram);
+                    break;
+            
+                case 2: // Carica il dendrogramma da file
                     String fileName = (String) in.readObject();
                     String dendrogram = loadDendrogramFromFile(fileName);
                     if (dendrogram != null) {
@@ -57,24 +65,16 @@ public class ServerOneClient implements Runnable {
                         out.writeObject("Errore: File non trovato.");
                     }
                     break;
-
-                case 2: // Apprende il dendrogramma dal database
-                    int depth = (Integer) in.readObject();
-                    int distanceType = (Integer) in.readObject();
-                    String learnedDendrogram = learnDendrogramFromDatabase(depth, distanceType);
-                    out.writeObject("OK");
-                    out.writeObject(learnedDendrogram);
-                    break;
-
+            
                 case -1: // Fine della connessione
                     exit = true;
                     out.writeObject("Chiusura della connessione.");
                     break;
-
+            
                 default:
                     out.writeObject("Opzione non valida.");
                     break;
-            }
+            }            
         }
     }
 

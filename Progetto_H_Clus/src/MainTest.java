@@ -2,6 +2,8 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Scanner;
 import javax.swing.*;
+import java.io.File;
+
 
 import clustering.HierachicalClusterMiner;
 import clustering.InvalidDepthException;
@@ -33,6 +35,9 @@ public class MainTest {
                     // Caricamento di un oggetto serializzato
                     System.out.print("Inserisci il nome del file da caricare (da Saved_Object): ");
                     String fileName = scanner.nextLine();
+                    if (!fileName.endsWith(".dat")) {
+                        fileName += ".dat";
+                    }
                     String fullPath = directoryPath + "/" + fileName;  // Percorso completo
                     
                     try {
@@ -122,7 +127,10 @@ public class MainTest {
                     System.out.print("Inserisci il nome del file: ");
                     String fileName = scanner.nextLine();  // Usa scanner.nextLine() per leggere il nome del file
                     String fullPath = "Saved_Object/" + fileName;  // Salva nella directory Saved_Object
-                    clustering.salva(fullPath);  // Salva il file nel percorso specificato
+                    if (!new File(fullPath).exists() && !fileName.endsWith(".dat")) {
+                        fullPath += ".dat";
+                    }
+                    clustering = HierachicalClusterMiner.loadHierachicalClusterMiner(fullPath); // Salva il file nel percorso specificato
                     System.out.println("Oggetto HierachicalClusterMiner salvato correttamente in " + fullPath);
                     mostraDendrogramma(clustering, "Dendrogramma creato e salvato");
                     salvataggioRiuscito = true;  // Esci dal ciclo se il salvataggio ha successo

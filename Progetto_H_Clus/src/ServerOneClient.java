@@ -80,7 +80,7 @@ public class ServerOneClient implements Runnable {
 
     private boolean loadTableFromDatabase(String tableName) {
         // Simulazione del caricamento della tabella
-        return "exampleTab".equals(tableName);
+        return "exampletab".equals(tableName);
     }
 
     private String loadDendrogramFromFile(String fileName) {

@@ -74,14 +74,29 @@ public class ServerOneClient implements Runnable {
             
                 case 2: // Carica il dendrogramma da file
                     String fileName = (String) in.readObject();
-                    String dendrogram = loadDendrogramFromFile(fileName);
-                    if (dendrogram != null) {
+                    HierachicalClusterMiner clustering = loadDendrogramFromFile(fileName);
+                    if (clustering != null) {
                         out.writeObject("OK");
-                        out.writeObject(dendrogram);
+                        out.writeObject(clustering);
                     } else {
                         out.writeObject("Errore: File non trovato.");
                     }
                     break;
+
+                case 3: // Salva il dendrogramma su file
+                    String saveFileName = (String) in.readObject();
+                    if (!saveFileName.endsWith(".dat")) {
+                        saveFileName += ".dat";  // Aggiungi l'estensione se non presente
+                    }
+                    HierachicalClusterMiner clusteringToSave = (HierachicalClusterMiner) in.readObject();  // Ricevi l'oggetto dal client
+                    boolean saveSuccess = saveDendrogramToFile(saveFileName, clusteringToSave); // Implementa questo metodo
+    
+                    if (saveSuccess) {
+                        out.writeObject("OK");
+                    } else {
+                        out.writeObject("Errore durante il salvataggio del dendrogramma.");
+                    }
+                    break;   
             
                 case -1: // Fine della connessione
                     exit = true;
@@ -95,17 +110,35 @@ public class ServerOneClient implements Runnable {
         }
     }
 
+    private boolean saveDendrogramToFile(String fileName, HierachicalClusterMiner clustering) {
+        try (FileOutputStream fos = new FileOutputStream(fileName);
+             ObjectOutputStream oos = new ObjectOutputStream(fos)) {
+            oos.writeObject(clustering);  // Salva il dendrogramma come oggetto
+            return true;
+        } catch (IOException e) {
+            e.printStackTrace();
+            return false;  // Ritorna false in caso di errore
+        }
+    }
+
     private boolean loadTableFromDatabase(String tableName) {
         // Simulazione del caricamento della tabella
         return "exampletab".equals(tableName);
     }
 
-    private String loadDendrogramFromFile(String fileName) {
-        // Simulazione del caricamento del dendrogramma da file
-        if ("example3.dat".equals(fileName)) {
-            return "Dendrogramma caricato da " + fileName;
+    private HierachicalClusterMiner loadDendrogramFromFile(String fileName) {
+        File file = new File(fileName);
+        if (!file.exists()) {
+            return null;  // Se il file non esiste, ritorna null
         }
-        return null;
+    
+        try (FileInputStream fis = new FileInputStream(file);
+             ObjectInputStream ois = new ObjectInputStream(fis)) {
+            return (HierachicalClusterMiner) ois.readObject();  // Carica l'oggetto HierachicalClusterMiner
+        } catch (IOException | ClassNotFoundException e) {
+            e.printStackTrace();
+            return null;  // Ritorna null in caso di errore
+        }
     }
 
     private String learnDendrogramFromDatabase(int depth, int distanceType) throws IOException, InvalidDepthException {

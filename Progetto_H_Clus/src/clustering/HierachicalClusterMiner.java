@@ -72,5 +72,13 @@ public class HierachicalClusterMiner implements Serializable {
                 return (HierachicalClusterMiner) in.readObject(); 
             }
         }
-}
+
+
+    
+        public void save(String filePath) throws IOException {
+            try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(filePath))) {
+                oos.writeObject(this); // Serializza l'oggetto corrente
+            }
+        }
+    }
 

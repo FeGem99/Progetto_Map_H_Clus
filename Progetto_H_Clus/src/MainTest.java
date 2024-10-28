@@ -122,22 +122,18 @@ public class MainTest {
                     // Ciclo per il salvataggio con gestione eccezioni
                     boolean salvataggioRiuscito = false;
             while (!salvataggioRiuscito) {
-                try {
-                    scanner.nextLine();
-                    System.out.print("Inserisci il nome del file: ");
-                    String fileName = scanner.nextLine();  // Usa scanner.nextLine() per leggere il nome del file
-                    String fullPath = "Saved_Object/" + fileName;  // Salva nella directory Saved_Object
-                    if (!new File(fullPath).exists() && !fileName.endsWith(".dat")) {
-                        fullPath += ".dat";
-                    }
-                    clustering = HierachicalClusterMiner.loadHierachicalClusterMiner(fullPath); // Salva il file nel percorso specificato
-                    System.out.println("Oggetto HierachicalClusterMiner salvato correttamente in " + fullPath);
-                    mostraDendrogramma(clustering, "Dendrogramma creato e salvato");
-                    salvataggioRiuscito = true;  // Esci dal ciclo se il salvataggio ha successo
-    } catch (IOException e) {
-        System.out.println("Errore durante il salvataggio: " + e.getMessage());
-        System.out.println("Riprova con un percorso valido.");
-    }
+                scanner.nextLine();
+                System.out.print("Inserisci il nome del file: ");
+                String fileName = scanner.nextLine();  // Usa scanner.nextLine() per leggere il nome del file
+                if (!fileName.endsWith(".dat")) {
+                    fileName += ".dat";  // Aggiungi l'estensione se non presente
+                }
+                String fullPath = directoryPath + "/" + fileName;  // Salva nella directory Saved_Object
+                
+                clustering.save(fullPath); // Salva il file nel percorso specificato
+                System.out.println("Oggetto HierachicalClusterMiner salvato correttamente in " + fullPath);
+                mostraDendrogramma(clustering, "Dendrogramma creato e salvato");
+                salvataggioRiuscito = true;  // Esci dal ciclo se il salvataggio ha successo
 }
 
                     sceltaValida = true; // Uscita dal ciclo perché tutte le operazioni sono andate a buon fine

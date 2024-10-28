@@ -1,6 +1,13 @@
 import java.io.*;
 import java.net.Socket;
 
+import clustering.HierachicalClusterMiner;
+import clustering.InvalidDepthException;
+import data.Data;
+import distance.AverageLinkDistance;
+import distance.ClusterDistance;
+import distance.SingleLinkDistance;
+
 public class ServerOneClient implements Runnable {
     private Socket clientSocket;
     private ObjectOutputStream out;
@@ -22,6 +29,9 @@ public class ServerOneClient implements Runnable {
 
         } catch (IOException | ClassNotFoundException e) {
             System.err.println("Errore di connessione con il client: " + e.getMessage());
+        } catch (InvalidDepthException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
         } finally {
             // Chiude il socket e i flussi
             try {
@@ -34,7 +44,7 @@ public class ServerOneClient implements Runnable {
         }
     }
 
-    private void handleClient() throws IOException, ClassNotFoundException {
+    private void handleClient() throws IOException, ClassNotFoundException, InvalidDepthException {
         boolean exit = false;
 
         while (!exit) {
@@ -47,13 +57,20 @@ public class ServerOneClient implements Runnable {
                     out.writeObject(success ? "OK" : "Tabella non trovata.");
                     break;
             
-                case 1: // Apprende il dendrogramma dal database
+                    case 1: // Apprende il dendrogramma dal database
                     int depth = (Integer) in.readObject();
                     int distanceType = (Integer) in.readObject();
                     String learnedDendrogram = learnDendrogramFromDatabase(depth, distanceType);
-                    out.writeObject("OK");
-                    out.writeObject(learnedDendrogram);
+                
+                    // Invia il risultato al client
+                    if (learnedDendrogram.startsWith("Errore")) {
+                        out.writeObject(learnedDendrogram);  // Invia un messaggio di errore
+                    } else {
+                        out.writeObject("OK");
+                        out.writeObject(learnedDendrogram);  // Invia il dendrogramma appreso
+                    }
                     break;
+                
             
                 case 2: // Carica il dendrogramma da file
                     String fileName = (String) in.readObject();
@@ -91,8 +108,39 @@ public class ServerOneClient implements Runnable {
         return null;
     }
 
-    private String learnDendrogramFromDatabase(int depth, int distanceType) {
-        // Simulazione dell'apprendimento del dendrogramma dal database
-        return "Dendrogramma appreso con profondità " + depth + " e distanza " + (distanceType == 1 ? "single-link" : "average-link");
+    private String learnDendrogramFromDatabase(int depth, int distanceType) throws IOException, InvalidDepthException {
+    // Crea l'oggetto Data per caricare i dati dal database
+    Data data;
+    try {
+        data = new Data("exampletab");  // Nome della tabella, potrebbe essere dinamico
+    } catch (Exception e) {
+        return "Errore nella creazione dell'oggetto Data: " + e.getMessage();
     }
+
+    // Verifica che la profondità sia valida
+    if (depth < 1 || depth > data.getNumberOfExample()) {
+        return "Profondità del dendrogramma non valida.";
+    }
+
+    // Crea il ClusterDistance in base al tipo di distanza
+    ClusterDistance distance = null;
+    switch (distanceType) {
+        case 1:
+            distance = new SingleLinkDistance();
+            break;
+        case 2:
+            distance = new AverageLinkDistance();
+            break;
+        default:
+            return "Tipo di distanza non valido.";
+    }
+
+    // Crea l'oggetto HierachicalClusterMiner e esegui il clustering
+    HierachicalClusterMiner clustering = new HierachicalClusterMiner(depth);
+    clustering.mine(data, distance);
+
+    // Restituisce il dendrogramma come stringa per essere visualizzato dal client
+    return clustering.toString(data);
+}
+
 }

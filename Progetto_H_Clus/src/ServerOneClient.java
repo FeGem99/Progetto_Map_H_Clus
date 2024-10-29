@@ -127,19 +127,39 @@ public class ServerOneClient implements Runnable {
     }
 
     private HierachicalClusterMiner loadDendrogramFromFile(String fileName) {
-        File file = new File(fileName);
-        if (!file.exists()) {
-            return null;  // Se il file non esiste, ritorna null
+        String directoryPath = "Saved_Object";
+        File directory = new File(directoryPath);
+        
+        // Controlla se la directory esiste, altrimenti la crea
+        if (!directory.exists()) {
+            directory.mkdirs();
         }
-    
+        
+        // Aggiunge l'estensione se non presente
+        if (!fileName.endsWith(".dat")) {
+            fileName += ".dat";
+        }
+        
+        String fullPath = directoryPath + "/" + fileName;
+        File file = new File(fullPath);
+        
+        // Verifica l'esistenza del file
+        if (!file.exists()) {
+            System.out.println("Errore: File non trovato in " + fullPath);
+            return null;
+        }
+        
+        // Caricamento dell'oggetto HierachicalClusterMiner
         try (FileInputStream fis = new FileInputStream(file);
              ObjectInputStream ois = new ObjectInputStream(fis)) {
-            return (HierachicalClusterMiner) ois.readObject();  // Carica l'oggetto HierachicalClusterMiner
+            return (HierachicalClusterMiner) ois.readObject();
         } catch (IOException | ClassNotFoundException e) {
+            System.out.println("Errore durante il caricamento del file: " + e.getMessage());
             e.printStackTrace();
-            return null;  // Ritorna null in caso di errore
+            return null;
         }
     }
+    
 
     private String learnDendrogramFromDatabase(int depth, int distanceType) throws IOException, InvalidDepthException {
     // Crea l'oggetto Data per caricare i dati dal database

@@ -59,26 +59,24 @@ public class HierachicalClusterMiner implements Serializable {
     }
 
     //metodo per salvare un'istanza serializzata su file
-    public void salva(String fileName) throws FileNotFoundException, IOException {
-        try (ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream(fileName))) {
-            out.writeObject(this);
+    public static HierachicalClusterMiner loadHierachicalClusterMiner(String fileName, Data data)
+            throws FileNotFoundException, IOException, ClassNotFoundException, InvalidDepthException {
+        try (ObjectInputStream in = new ObjectInputStream(new FileInputStream(fileName))) {
+            HierachicalClusterMiner miner = (HierachicalClusterMiner) in.readObject();
+
+            // Verifica la validità della profondità del dendrogramma caricato
+            int numberOfExample = data.getNumberOfExample();
+            if (miner.dendrogram.getDepth() > numberOfExample) {
+                throw new InvalidDepthException("La profondità del dendrogramma caricato è maggiore del numero di esempi nel dataset.");
+            }
+
+            return miner;
         }
     }
 
-    //metodo per caricare un'istanzia serializzata
-    public static HierachicalClusterMiner loadHierachicalClusterMiner (String fileName)
-        throws FileNotFoundException, IOException, ClassNotFoundException {
-            try (ObjectInputStream in = new ObjectInputStream(new FileInputStream(fileName))) {
-                return (HierachicalClusterMiner) in.readObject(); 
-            }
-        }
-
-
-    
-        public void save(String filePath) throws IOException {
-            try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(filePath))) {
-                oos.writeObject(this); // Serializza l'oggetto corrente
-            }
+    public void save(String filePath) throws IOException {
+        try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(filePath))) {
+            oos.writeObject(this); // Serializza l'oggetto corrente
         }
     }
-
+}

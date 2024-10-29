@@ -41,7 +41,7 @@ public class MainTest {
                     String fullPath = directoryPath + "/" + fileName;  // Percorso completo
                     
                     try {
-                        clustering = HierachicalClusterMiner.loadHierachicalClusterMiner(fullPath);
+                        clustering = HierachicalClusterMiner.loadHierachicalClusterMiner(fullPath, null);
                         System.out.println("Oggetto HierachicalClusterMiner caricato correttamente da " + fullPath);
                         mostraDendrogramma(clustering, "Dendrogramma caricato");  // Visualizza il dendrogramma dopo il caricamento
                     } catch (FileNotFoundException e) {

@@ -6,7 +6,7 @@
 package data;
 
 
-class NoDataExeption extends Exception {
+public class NoDataExeption extends Exception {
     public NoDataExeption(String message){
         super(message);
     }

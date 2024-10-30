@@ -136,9 +136,9 @@ public class ServerOneClient implements Runnable {
         }
         
         // Aggiunge l'estensione se non presente
-        if (!fileName.endsWith(".dat")) {
-            fileName += ".dat";
-        }
+       // if (!fileName.endsWith(".dat")) {
+        //    fileName += ".dat";
+      //  }
         
         String fullPath = directoryPath + "/" + fileName;
         File file = new File(fullPath);
@@ -159,7 +159,7 @@ public class ServerOneClient implements Runnable {
             return null;
         }
     }
-    
+
 
     private String learnDendrogramFromDatabase(int depth, int distanceType) throws IOException, InvalidDepthException {
     // Crea l'oggetto Data per caricare i dati dal database

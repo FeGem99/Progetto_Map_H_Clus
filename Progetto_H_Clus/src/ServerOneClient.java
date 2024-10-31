@@ -33,16 +33,21 @@ public class ServerOneClient implements Runnable {
             // TODO Auto-generated catch block
             e.printStackTrace();
         } finally {
-            // Chiude il socket e i flussi
-            try {
-                if (in != null) in.close();
-                if (out != null) out.close();
-                if (clientSocket != null) clientSocket.close();
-            } catch (IOException e) {
-                System.err.println("Errore nella chiusura delle risorse: " + e.getMessage());
-            }
+            closeConnection();  // Chiamata alla nuova funzione di chiusura
         }
     }
+    
+    private void closeConnection() {
+        try {
+            if (in != null) in.close();
+            if (out != null) out.close();
+            if (clientSocket != null) clientSocket.close();
+            System.out.println("Connessione chiusa correttamente.");
+        } catch (IOException e) {
+            System.err.println("Errore nella chiusura delle risorse: " + e.getMessage());
+        }
+    }
+    
 
     private void handleClient() throws IOException, ClassNotFoundException, InvalidDepthException {
         boolean exit = false;

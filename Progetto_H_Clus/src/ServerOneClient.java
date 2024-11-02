@@ -140,13 +140,9 @@ public class ServerOneClient implements Runnable {
         }
     }
 
-    public void saveAsFormattedString(String dendrogramData, String fullPath) {
-        try (BufferedWriter writer = new BufferedWriter(new FileWriter(fullPath))) {
-            writer.write(dendrogramData);
-            System.out.println("Dendrogramma salvato correttamente in " + fullPath);
-        } catch (IOException e) {
-            System.out.println("Errore durante il salvataggio del file: " + e.getMessage());
-            e.printStackTrace();
+    private void saveAsFormattedString(String data, String filePath) throws IOException {
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(filePath))) {
+            writer.write(data);
         }
     }
     

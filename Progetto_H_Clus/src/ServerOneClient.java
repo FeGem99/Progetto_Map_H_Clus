@@ -48,6 +48,7 @@ public class ServerOneClient implements Runnable {
             System.err.println("Errore nella chiusura delle risorse: " + e.getMessage());
         }
     }
+
     private void handleClient() throws IOException, ClassNotFoundException, InvalidDepthException {
         boolean exit = false;
 
@@ -93,57 +94,67 @@ public class ServerOneClient implements Runnable {
                     }
                     break;
 
-                    case 3: // Salva il dendrogramma su file
-                    boolean salvataggioRiuscito = false;
-                    String directoryPath = "\"C:\\Users\\Andrea Barbaro\\Documents\\GitHub\\Progetto_Map_H_Clus\\Saved_Object\""; // Sostituisci con il percorso desiderato
-                    HierachicalClusterMiner clusteringToSave = (HierachicalClusterMiner) in.readObject();
-
-                    while (!salvataggioRiuscito) {
-                        // Qui non possiamo usare Scanner, poiché siamo su server e non interagiamo con l'utente
-                        // Invece, riceviamo il nome del file come oggetto dal client
-                        String saveFileName = (String) in.readObject();
-                        if (!saveFileName.endsWith(".txt")) {
-                            saveFileName += ".txt"; // Aggiungi l'estensione se non presente
-                        }
-                        String fullPath = directoryPath + "/" + saveFileName;
-
-                        try {
-                            // Salva il dendrogramma nel formato .txt
-                            saveAsFormattedString(clusteringToSave.toString(), fullPath);
-                            System.out.println("Oggetto HierarchicalClusterMiner salvato correttamente in " + fullPath);
-                            out.writeObject("Dendrogramma salvato con successo: " + fullPath);
-                            salvataggioRiuscito = true; // Imposta a true per uscire dal ciclo
-                        } catch (IOException e) {
-                            System.out.println("Errore durante il salvataggio del file: " + e.getMessage());
-                            out.writeObject("Errore durante il salvataggio del file: " + e.getMessage());
-                        }
-                    }
-                    break;  
+                case 3: // Salva il dendrogramma su file
+                boolean salvataggioRiuscito = false;
+                String directoryPath = "Saved_Object";
+                File directory = new File(directoryPath);
+                if (!directory.exists()) {
+                    directory.mkdirs();  // Crea la cartella se non esiste
+                }
             
+                // Ricevi il nome del file
+                String saveFileName = (String) in.readObject();
+                System.out.println("Nome file ricevuto: " + saveFileName);  // Log per confermare il nome file
+            
+                if (!saveFileName.endsWith(".txt")) {
+                    saveFileName += ".txt";  // Aggiungi l'estensione se non presente
+                }
+                String fullPath = directoryPath + "\\" + saveFileName;
+            
+                // Ricevi il dendrogramma dal client come stringa
+                String dendrogramData = (String) in.readObject();
+                System.out.println("Dati dendrogramma ricevuti: " + dendrogramData);  // Log per confermare i dati del dendrogramma
+            
+                    // Salva il dendrogramma nel file
+                    saveAsFormattedString(dendrogramData, fullPath);
+                    System.out.println("Dendrogramma salvato correttamente in " + fullPath);
+                    salvataggioRiuscito = true;
+            
+                // Invia la risposta al client
+                if (salvataggioRiuscito) {
+                    out.writeObject("Dendrogramma salvato con successo: " + fullPath);
+                } else {
+                    out.writeObject("Errore durante il salvataggio del file.");
+                }
+                break;
+
                 case -1: // Fine della connessione
                     exit = true;
                     out.writeObject("Chiusura della connessione.");
                     break;
-            
+
                 default:
                     out.writeObject("Opzione non valida.");
                     break;
-            }            
+            }
         }
     }
 
-    public static void saveAsFormattedString(String dendrogramString, String filePath) throws IOException {
-        Files.write(Paths.get(filePath), dendrogramString.getBytes());
+    public void saveAsFormattedString(String dendrogramData, String fullPath) {
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(fullPath))) {
+            writer.write(dendrogramData);
+            System.out.println("Dendrogramma salvato correttamente in " + fullPath);
+        } catch (IOException e) {
+            System.out.println("Errore durante il salvataggio del file: " + e.getMessage());
+            e.printStackTrace();
+        }
     }
-
     
     
-
     private boolean loadTableFromDatabase(String tableName) {
         return "exampletab".equals(tableName);
     }
 
-    // Funzione per caricare il file .txt come stringa
     private String loadTextDendrogramFromFile(String fileName) {
         String directoryPath = "Saved_Object";
         File directory = new File(directoryPath);
@@ -199,11 +210,9 @@ public class ServerOneClient implements Runnable {
         }
 
         HierachicalClusterMiner clustering = new HierachicalClusterMiner(depth);
-    clustering.mine(data, distance);
+        clustering.mine(data, distance);
 
-    // Restituisce il dendrogramma come stringa per essere visualizzato dal client
-    return clustering.toString(data);
-
-       
+        // Restituisce il dendrogramma come stringa per essere visualizzato dal client
+        return clustering.toString(data);
     }
 }

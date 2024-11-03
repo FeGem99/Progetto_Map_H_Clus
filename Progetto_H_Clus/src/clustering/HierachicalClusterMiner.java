@@ -12,29 +12,24 @@ import data.Data;
 import distance.ClusterDistance;
 
 public class HierachicalClusterMiner implements Serializable {
-	
-	private static final long serialVersionUID = 1L;
+
+    private static final long serialVersionUID = 1L;
     private Dendrogram dendrogram;
 
-	
-	
-	
-	public HierachicalClusterMiner(int depth) {
-		dendrogram= new Dendrogram(depth);
-	
-	}
-	
-	
-        @Override
-	public String toString() {
-		return dendrogram.toString();
-	}
-	
-	public String toString(Data data) {
-		return dendrogram.toString(data);
-	}
-	
-	public void mine(Data data, ClusterDistance distance) throws InvalidDepthException{
+    public HierachicalClusterMiner(int depth) {
+        dendrogram = new Dendrogram(depth);
+    }
+
+    @Override
+    public String toString() {
+        return dendrogram.toString();
+    }
+
+    public String toString(Data data) {
+        return dendrogram.toString(data);
+    }
+
+    public void mine(Data data, ClusterDistance distance) throws InvalidDepthException {
         // Verifica se la profondità specificata è valida
         int numberOfExample = data.getNumberOfExample();
         if (dendrogram.getDepth() > numberOfExample) {
@@ -58,27 +53,28 @@ public class HierachicalClusterMiner implements Serializable {
         }
     }
 
-    //metodo per salvare un'istanza serializzata su file
-    public void salva(String fileName) throws FileNotFoundException, IOException {
-        try (ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream(fileName))) {
-            out.writeObject(this);
+    // Metodo per caricare un'istanza serializzata su file
+    public static HierachicalClusterMiner loadHierachicalClusterMiner(String fileName, Data data)
+            throws FileNotFoundException, IOException, ClassNotFoundException, InvalidDepthException {
+        try (ObjectInputStream in = new ObjectInputStream(new FileInputStream(fileName))) {
+            HierachicalClusterMiner miner = (HierachicalClusterMiner) in.readObject();
+
+            // Se data è null, non possiamo verificare la profondità
+            if (data != null) {
+                int numberOfExample = data.getNumberOfExample();
+                if (miner.dendrogram.getDepth() > numberOfExample) {
+                    throw new InvalidDepthException("La profondità del dendrogramma caricato è maggiore del numero di esempi nel dataset.");
+                }
+            }
+
+            return miner;
         }
     }
 
-    //metodo per caricare un'istanzia serializzata
-    public static HierachicalClusterMiner loadHierachicalClusterMiner (String fileName)
-        throws FileNotFoundException, IOException, ClassNotFoundException {
-            try (ObjectInputStream in = new ObjectInputStream(new FileInputStream(fileName))) {
-                return (HierachicalClusterMiner) in.readObject(); 
-            }
-        }
-
-
-    
-        public void save(String filePath) throws IOException {
-            try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(filePath))) {
-                oos.writeObject(this); // Serializza l'oggetto corrente
-            }
+    public void save(String filePath) throws IOException {
+        try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(filePath))) {
+            oos.writeObject(this); // Serializza l'oggetto corrente
         }
     }
+}
 

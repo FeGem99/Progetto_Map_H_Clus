@@ -109,8 +109,8 @@ public class ServerOneClient implements Runnable {
     }
 
     private void saveDendrogram(String dendrogramString, String fileName) throws IOException {
-        if (!fileName.endsWith(".txt")) {
-            fileName += ".txt";
+        if (!fileName.endsWith(".dat")) {
+            fileName += ".dat";
         }
         String fullPath = DIRECTORY_PATH + "/" + fileName;
         java.nio.file.Files.write(java.nio.file.Paths.get(fullPath), dendrogramString.getBytes());

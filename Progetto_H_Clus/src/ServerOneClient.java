@@ -81,14 +81,16 @@ public void run() {
     }
 
     private void mineDendrogram() throws IOException, ClassNotFoundException, InvalidDepthException {
+        Object tableNameObj = in.readObject();
         Object depthObj = in.readObject();
         Object dTypeObj = in.readObject();
     
-        if (!(depthObj instanceof Integer) || !(dTypeObj instanceof Integer)) {
-            out.writeObject("Errore: tipo dei dati non valido. Attesi Integer per profondità e tipo di distanza.");
+        if (!(tableNameObj instanceof String) || !(depthObj instanceof Integer) || !(dTypeObj instanceof Integer)) {
+            out.writeObject("Errore: tipo dei dati non valido. Attesi String per il nome della tabella, Integer per profondità e tipo di distanza.");
             return;
         }
     
+        String tableName = (String) tableNameObj;
         int depth = (Integer) depthObj;
         int dType = (Integer) dTypeObj;
     
@@ -99,20 +101,21 @@ public void run() {
                 default -> throw new IllegalArgumentException("Tipo di distanza non valido");
             };
     
-            Data data = new Data("exampletab");  // Ottieni i dati caricati
+            // Creazione dinamica dell'oggetto Data usando il nome della tabella fornito
+            Data data = new Data(tableName); 
             HierachicalClusterMiner clustering = new HierachicalClusterMiner(depth);
             clustering.mine(data, distance);
     
             out.writeObject("OK");
             out.writeObject(clustering.toString(data)); // Manda il dendrogramma al client
     
-            // Ricevi il nome del file come stringa
+            // Ricezione del nome del file come stringa
             Object fileNameObj = in.readObject();
             if (!(fileNameObj instanceof String)) {
                 out.writeObject("Errore: il nome del file deve essere una stringa.");
                 return;
             }
-            
+    
             String fileName = (String) fileNameObj;
             System.out.println("Nome del file inserito: " + fileName);
     
@@ -125,6 +128,7 @@ public void run() {
             out.writeObject("Errore durante l'apprendimento del dendrogramma: " + e.getMessage());
         }
     }
+    
     
     
     

@@ -34,8 +34,8 @@ public class MainTest {
                     // Caricamento di un oggetto salvato come stringa formattata
                     System.out.print("Inserisci il nome del file da caricare (da Saved_Object): ");
                     String fileName = scanner.nextLine();
-                    if (!fileName.endsWith(".txt")) {
-                        fileName += ".txt";
+                    if (!fileName.endsWith(".dat")) {
+                        fileName += ".dat";
                     }
                     String fullPath = directoryPath + "/" + fileName;
 
@@ -118,8 +118,8 @@ public class MainTest {
                         scanner.nextLine();
                         System.out.print("Inserisci il nome del file: ");
                         String fileName = scanner.nextLine();
-                        if (!fileName.endsWith(".txt")) {
-                            fileName += ".txt";
+                        if (!fileName.endsWith(".dat")) {
+                            fileName += ".dat";
                         }
                         String fullPath = directoryPath + "/" + fileName;
 

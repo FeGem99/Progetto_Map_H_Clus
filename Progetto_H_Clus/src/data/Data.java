@@ -20,29 +20,6 @@ public class Data {
 		DbAccess dbAccess = new DbAccess();
 		dbAccess.initConnection();
 
-		//ottengo i dati dalla tabella
-		/* 
-		String query = "SELECT * FROM " + tableName;
-        Connection conn = dbAccess.getConnection();
-        Statement stmt = conn.createStatement();
-        ResultSet rs = stmt.executeQuery(query);
-		 
-		if (!rs.isBeforeFirst()) {
-            throw new NoDataException("La tabella è vuota");
-        }
-
-        while (rs.next()) {
-            Example example = new Example();
-            example.add(rs.getDouble("X1"));
-            example.add(rs.getDouble("X2"));
-            example.add(rs.getDouble("X3"));
-            data.add(example);
-        }
-
-        this.numberOfExamples = data.size();
-        dbAccess.closeConnection();
-    }
-		*/
 		try {
 			TableData tableData = new TableData(dbAccess);
 			List<Example> examples = tableData.getDistinctTransazioni(tableName);

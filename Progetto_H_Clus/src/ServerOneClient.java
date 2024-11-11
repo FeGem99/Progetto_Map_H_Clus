@@ -81,19 +81,41 @@ public void run() {
     }
 
     private void mineDendrogram() throws IOException, ClassNotFoundException, InvalidDepthException {
-        Object tableNameObj = in.readObject();
-        Object depthObj = in.readObject();
-        Object dTypeObj = in.readObject();
+        String tableName = null;
+        Integer depth = null;
+        Integer dType = null;
     
-        if (!(tableNameObj instanceof String) || !(depthObj instanceof Integer) || !(dTypeObj instanceof Integer)) {
-            out.writeObject("Errore: tipo dei dati non valido. Attesi String per il nome della tabella, Integer per profondità e tipo di distanza.");
-            return;
+        // Continua a chiedere i dati finché non sono validi
+        while (tableName == null || depth == null || dType == null) {
+            // Controlla che il nome della tabella sia del tipo String
+            Object tableNameObj = in.readObject();
+            if (tableNameObj instanceof String) {
+                tableName = (String) tableNameObj;
+            } else {
+                out.writeObject("Errore: il nome della tabella deve essere una stringa. Reinserire i dati.");
+                continue;
+            }
+    
+            // Controlla che la profondità sia del tipo Integer
+            Object depthObj = in.readObject();
+            if (depthObj instanceof Integer) {
+                depth = (Integer) depthObj;
+            } else {
+                out.writeObject("Errore: la profondità deve essere un numero intero. Reinserire i dati.");
+                continue;
+            }
+    
+            // Controlla che il tipo di distanza sia del tipo Integer
+            Object dTypeObj = in.readObject();
+            if (dTypeObj instanceof Integer) {
+                dType = (Integer) dTypeObj;
+            } else {
+                out.writeObject("Errore: il tipo di distanza deve essere un numero intero. Reinserire i dati.");
+                continue;
+            }
         }
     
-        String tableName = (String) tableNameObj;
-        int depth = (Integer) depthObj;
-        int dType = (Integer) dTypeObj;
-    
+        // Prosegue con il processo di mining del dendrogramma
         try {
             ClusterDistance distance = switch (dType) {
                 case 1 -> new SingleLinkDistance();
@@ -101,38 +123,28 @@ public void run() {
                 default -> throw new IllegalArgumentException("Tipo di distanza non valido");
             };
     
-            // Creazione dinamica dell'oggetto Data usando il nome della tabella fornito
-            Data data = new Data(tableName); 
+            Data data = new Data(tableName);
             HierachicalClusterMiner clustering = new HierachicalClusterMiner(depth);
             clustering.mine(data, distance);
     
             out.writeObject("OK");
             out.writeObject(clustering.toString(data)); // Manda il dendrogramma al client
     
-            // Ricezione del nome del file come stringa
+            // Richiede il nome del file e lo salva
             Object fileNameObj = in.readObject();
-            if (!(fileNameObj instanceof String)) {
+            if (fileNameObj instanceof String) {
+                String fileName = (String) fileNameObj;
+                saveDendrogram(clustering.toString(), fileName);
+                out.writeObject("Dendrogramma salvato correttamente.");
+                System.out.println("Dendrogramma salvato, operazione completata.");
+            } else {
                 out.writeObject("Errore: il nome del file deve essere una stringa.");
-                return;
             }
-    
-            String fileName = (String) fileNameObj;
-            System.out.println("Nome del file inserito: " + fileName);
-    
-            saveDendrogram(clustering.toString(), fileName);
-            out.writeObject("Dendrogramma salvato correttamente.");
-            
-            System.out.println("Dendrogramma salvato, operazione completata.");
     
         } catch (Exception e) {
             out.writeObject("Errore durante l'apprendimento del dendrogramma: " + e.getMessage());
         }
     }
-    
-    
-    
-    
-    
 
     private void loadDendrogramFromFile() throws IOException, ClassNotFoundException {
         String fileName = (String) in.readObject();

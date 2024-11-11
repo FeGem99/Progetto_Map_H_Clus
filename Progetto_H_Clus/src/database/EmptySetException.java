@@ -1,13 +1,16 @@
 package database;
 
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
+/**
+ * Eccezione personalizzata che viene sollevata quando un set è vuoto, ma si cerca di eseguire un'operazione su di esso.
  */
-
-
 public class EmptySetException extends Exception {
-public EmptySetException(String message){
-    super(message);
-}
+
+    /**
+     * Costruttore della classe EmptySetException.
+     * 
+     * @param message il messaggio di errore associato all'eccezione.
+     */
+    public EmptySetException(String message) {
+        super(message);
+    }
 }

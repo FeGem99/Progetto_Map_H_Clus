@@ -2,8 +2,10 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.Scanner;
-import javax.swing.*;
-import java.io.File;
+
+import javax.swing.JFrame;
+import javax.swing.JScrollPane;
+import javax.swing.JTextArea;
 
 import clustering.HierachicalClusterMiner;
 import clustering.InvalidDepthException;
@@ -12,8 +14,22 @@ import distance.AverageLinkDistance;
 import distance.ClusterDistance;
 import distance.SingleLinkDistance;
 
+/**
+ * Classe principale per testare la funzionalità di clustering gerarchico.
+ * L'utente può caricare un oggetto `HierachicalClusterMiner` esistente o crearne uno nuovo.
+ * Viene utilizzato un dataset proveniente da una tabella nel database, 
+ * con possibilità di scegliere il tipo di distanza tra cluster e di visualizzare e salvare il dendrogramma.
+ */
 public class MainTest {
 
+    /**
+     * Metodo principale che gestisce l'interazione con l'utente e il flusso del programma.
+     * Permette di caricare o creare un oggetto `HierachicalClusterMiner`, 
+     * configurare il clustering e visualizzare i risultati.
+     * 
+     * @param args Argomenti da linea di comando, non utilizzati in questa versione.
+     * @throws InvalidDepthException Se la profondità del dendrogramma non è valida.
+     */
     public static void main(String[] args) throws InvalidDepthException {
         Scanner scanner = new Scanner(System.in);
         HierachicalClusterMiner clustering = null;
@@ -143,6 +159,12 @@ public class MainTest {
         scanner.close();
     }
 
+    /**
+     * Mostra il dendrogramma in una finestra grafica.
+     * 
+     * @param dendrogramma La stringa del dendrogramma da visualizzare.
+     * @param titolo Il titolo della finestra.
+     */
     public static void mostraDendrogramma(String dendrogramma, String titolo) {
         JFrame frame = new JFrame(titolo);
         JTextArea textArea = new JTextArea(20, 40);
@@ -154,10 +176,24 @@ public class MainTest {
         frame.setVisible(true);
     }
 
+    /**
+     * Salva il dendrogramma in un file di testo.
+     * 
+     * @param dendrogramString La stringa del dendrogramma da salvare.
+     * @param filePath Il percorso del file in cui salvare il dendrogramma.
+     * @throws IOException Se si verifica un errore durante il salvataggio del file.
+     */
     public static void saveAsFormattedString(String dendrogramString, String filePath) throws IOException {
         Files.write(Paths.get(filePath), dendrogramString.getBytes());
     }
 
+    /**
+     * Carica un dendrogramma da un file di testo.
+     * 
+     * @param filePath Il percorso del file da cui caricare il dendrogramma.
+     * @return La stringa del dendrogramma.
+     * @throws IOException Se si verifica un errore durante il caricamento del file.
+     */
     public static String loadDendrogramAsString(String filePath) throws IOException {
         return new String(Files.readAllBytes(Paths.get(filePath)));
     }

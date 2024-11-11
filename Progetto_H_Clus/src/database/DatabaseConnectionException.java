@@ -1,14 +1,16 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
-
 package database;
 
-
+/**
+ * Eccezione personalizzata che viene sollevata quando si verifica un errore nella connessione al database.
+ */
 public class DatabaseConnectionException extends Exception {
-    public DatabaseConnectionException(String message){
+
+    /**
+     * Costruttore della classe DatabaseConnectionException.
+     * 
+     * @param message il messaggio di errore associato all'eccezione.
+     */
+    public DatabaseConnectionException(String message) {
         super(message);
     }
-
 }

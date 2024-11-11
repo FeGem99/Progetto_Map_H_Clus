@@ -1,13 +1,16 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
-
 package database;
 
-
+/**
+ * Eccezione personalizzata che viene sollevata quando un numero mancante viene rilevato durante l'elaborazione dei dati.
+ */
 public class MissingNumberException extends Exception {
-public MissingNumberException(String message){
-    super(message);
-}
+
+    /**
+     * Costruttore della classe MissingNumberException.
+     * 
+     * @param message il messaggio di errore associato all'eccezione.
+     */
+    public MissingNumberException(String message) {
+        super(message);
+    }
 }

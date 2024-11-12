@@ -14,14 +14,35 @@ import distance.SingleLinkDistance;
 
 public class MainTest {
 
+    /**
+     * Oggetto scanner utilizzato per leggere l'input dell'utente.
+     */
+    private static final Scanner scanner = new Scanner(System.in);
+
+    /**
+     * Oggetto per eseguire l'analisi di clustering gerarchico.
+     */
+    private static HierachicalClusterMiner clustering;
+
+    /**
+     * Percorso della directory in cui vengono salvati gli oggetti.
+     */
+    private static final String directoryPath = "Saved_Object";
+
+    /**
+     * Metodo principale per eseguire l'applicazione.
+     * Permette all'utente di scegliere se caricare un oggetto `HierachicalClusterMiner`
+     * da un file esistente o crearne uno nuovo, eseguire il clustering e salvare i risultati.
+     * 
+     * @param args Argomenti della riga di comando (non utilizzati).
+     * @throws InvalidDepthException Se la profondità del dendrogramma è invalida.
+     */
     public static void main(String[] args) throws InvalidDepthException {
-        Scanner scanner = new Scanner(System.in);
-        HierachicalClusterMiner clustering = null;
-        String directoryPath = "Saved_Object";
         FileUtils.createDirectoryIfNotExists(directoryPath);
 
         boolean sceltaValida = false;
 
+        // Ciclo principale per gestire la selezione dell'utente
         while (!sceltaValida) {
             try {
                 // Presenta il menu all'utente
@@ -31,7 +52,7 @@ public class MainTest {
                 String scelta = scanner.nextLine();
 
                 if (scelta.equals("1")) {
-                    // Caricamento di un oggetto salvato come stringa formattata
+                    // Caricamento di un oggetto salvato
                     System.out.print("Inserisci il nome del file da caricare (da Saved_Object): ");
                     String fileName = scanner.nextLine();
                     if (!fileName.endsWith(".dat")) {
@@ -47,6 +68,7 @@ public class MainTest {
                         System.out.println("Errore durante il caricamento del file: " + e.getMessage());
                     }
                 } else if (scelta.equals("2")) {  
+                    // Creazione di un nuovo oggetto Data
                     Data data = null;
                     while (data == null) {
                         try {
@@ -61,6 +83,7 @@ public class MainTest {
                         }
                     }
 
+                    // Gestione della profondità del dendrogramma
                     int depth;
                     do {
                         try {
@@ -82,6 +105,7 @@ public class MainTest {
                     scanner.nextLine();
                     clustering = new HierachicalClusterMiner(depth);
 
+                    // Selezione del tipo di distanza tra cluster
                     ClusterDistance distance = null;
                     do {
                         try {
@@ -101,6 +125,7 @@ public class MainTest {
                         }
                     } while (distance == null);
 
+                    // Calcolo della matrice delle distanze
                     double[][] distancematrix = data.distance();
                     System.out.println("Matrice delle distanze:\n");
                     for (double[] row : distancematrix) {
@@ -113,6 +138,7 @@ public class MainTest {
                     System.out.println(clustering);
                     System.out.println(clustering.toString(data));
 
+                    // Salvataggio dell'oggetto
                     boolean salvataggioRiuscito = false;
                     while (!salvataggioRiuscito) {
                         scanner.nextLine();
@@ -143,6 +169,12 @@ public class MainTest {
         scanner.close();
     }
 
+    /**
+     * Mostra un dendrogramma in una finestra grafica.
+     * 
+     * @param dendrogramma Stringa contenente la rappresentazione del dendrogramma.
+     * @param titolo Titolo della finestra.
+     */
     public static void mostraDendrogramma(String dendrogramma, String titolo) {
         JFrame frame = new JFrame(titolo);
         JTextArea textArea = new JTextArea(20, 40);
@@ -154,10 +186,24 @@ public class MainTest {
         frame.setVisible(true);
     }
 
+    /**
+     * Salva un dendrogramma come stringa formattata in un file.
+     * 
+     * @param dendrogramString La stringa che rappresenta il dendrogramma.
+     * @param filePath Il percorso del file in cui salvare il dendrogramma.
+     * @throws IOException Se si verifica un errore durante il salvataggio del file.
+     */
     public static void saveAsFormattedString(String dendrogramString, String filePath) throws IOException {
         Files.write(Paths.get(filePath), dendrogramString.getBytes());
     }
 
+    /**
+     * Carica un dendrogramma da un file come stringa.
+     * 
+     * @param filePath Il percorso del file da cui caricare il dendrogramma.
+     * @return La stringa che rappresenta il dendrogramma.
+     * @throws IOException Se si verifica un errore durante il caricamento del file.
+     */
     public static String loadDendrogramAsString(String filePath) throws IOException {
         return new String(Files.readAllBytes(Paths.get(filePath)));
     }

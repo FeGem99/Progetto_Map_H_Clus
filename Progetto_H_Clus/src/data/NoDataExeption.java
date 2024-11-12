@@ -1,14 +1,17 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
-
 package data;
 
-
+/**
+ * Classe di eccezione personalizzata che viene lanciata quando non ci sono dati disponibili,
+ * come nel caso in cui una tabella nel database sia vuota.
+ */
 public class NoDataExeption extends Exception {
-    public NoDataExeption(String message){
+
+    /**
+     * Costruttore che accetta un messaggio di errore.
+     * 
+     * @param message il messaggio di errore da associare all'eccezione.
+     */
+    public NoDataExeption(String message) {
         super(message);
     }
-
 }

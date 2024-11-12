@@ -12,6 +12,17 @@ import distance.AverageLinkDistance;
 import distance.ClusterDistance;
 import distance.SingleLinkDistance;
 
+
+/**
+ * La classe `MainTest` gestisce il flusso principale dell'applicazione di clustering gerarchico.
+ * Consente all'utente di scegliere se caricare un oggetto `HierachicalClusterMiner` esistente
+ * da un file, o crearne uno nuovo eseguendo un'analisi di clustering su un dataset.
+ * L'utente può scegliere il tipo di distanza da utilizzare tra i cluster e la profondità del dendrogramma.
+ * I risultati del clustering vengono poi salvati su un file in formato `.dat`.
+ *
+ * La classe gestisce anche la visualizzazione del dendrogramma in una finestra grafica e la gestione di errori
+ * relativi all'input dell'utente, come la scelta della profondità del dendrogramma e il tipo di distanza tra i cluster.
+ */
 public class MainTest {
 
     /**

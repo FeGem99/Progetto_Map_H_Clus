@@ -2,6 +2,13 @@ import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
 
+
+/**
+ * La classe `MultiServer` gestisce la creazione e la gestione di un server in grado di
+ * supportare connessioni multiple da client simultanei. Utilizza un server socket per
+ * accettare connessioni in entrata e crea un nuovo thread per ogni client connesso,
+ * permettendo così la gestione parallela di più connessioni.
+ */
 public class MultiServer {
 
     /**
